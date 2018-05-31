@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "776529073676",
+    "project_id": "liftkarade-574d6"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:776529073676:android:292dfb2850d8fe67",
+        "android_client_info": {
+          "package_name": "com.liftkarade.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "776529073676-ls0cgv4kd63mq1qo9lshdme1atvc5ues.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.liftkarade.app",
+            "certificate_hash": "35C03BF0BDE7D0B0376D1F85326DC349FE5842BB"
+          }
+        },
+        {
+          "client_id": "776529073676-l4vf9v5ai2dtutmrc2crsep65sujn2ii.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBnxY8S2Y0Kq6jmz7IYJhKakwwBuO4nV0U"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

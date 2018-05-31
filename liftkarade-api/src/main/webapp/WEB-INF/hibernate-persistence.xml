@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd">
+	<!-- informs SC location of prop file -->
+	<!-- <context:property-placeholder location="database.properties" /> -->
+	
+	
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		p:driverClassName="com.mysql.jdbc.Driver" p:url="jdbc:mysql://localhost:3306/test1" p:username="root"
+		p:password="root" p:initialSize="1" p:maxActive="4"
+		destroy-method="close">
+	</bean>
+	
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="annotatedClasses">
+			<list>
+				<value>com.liftkarade.app.model.Address</value>
+				<value>com.liftkarade.app.model.PoolTrip</value>
+				<value>com.liftkarade.app.model.Transaction</value>
+				<value>com.liftkarade.app.model.Trip</value>
+				<value>com.liftkarade.app.model.User</value>
+				<value>com.liftkarade.app.model.Vehicle</value>
+				<value>com.liftkarade.app.model.Wallet</value>
+				<value>com.liftkarade.app.model.UserRoles</value>
+			</list>
+		</property> 
+		<property name="hibernateProperties">
+			<value>
+				hibernate.dialect=org.hibernate.dialect.MySQL5Dialect
+				hibernate.format_sql=true
+				hibernate.show_sql=true
+				hibernate.hbm2ddl.auto=create
+			</value>
+		</property>
+	</bean>
+
+
+</beans>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:bean="http://www.springframework.org/schema/beans"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.0.xsd">
+
+
+
+
+	<bean id="accessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased">
+    <constructor-arg>
+      <bean class="org.springframework.security.access.vote.RoleVoter" />
+    </constructor-arg>
+  	</bean>
+	<bean id="mySuccessHandler" class="com.sushil.sob.handler.MySuccessHandler"/>
+  	<bean id="authenticationEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint" >
+  	<constructor-arg value="/login"></constructor-arg>
+  	</bean>
+  	<bean id="customAuthenticationSuccessHandler" class="com.sushil.sob.handler.MySuccessHandler">
+ 
+  	</bean>
+  	<bean id="customAuthenticationFailureHandler" class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler">
+  	<property name="defaultFailureUrl" value="/loginfailed"></property>
+  	</bean>
+  	<bean id="authenticationFilter" class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter">
+  	<property name="sessionAuthenticationStrategy" ref="sas"></property>
+  	<property name="authenticationManager" ref="authenticationManager"></property>
+  	<property name="authenticationFailureHandler" ref="customAuthenticationFailureHandler"></property>
+  	<property name="authenticationSuccessHandler" ref="customAuthenticationSuccessHandler"></property>
+  	</bean>
+	<bean id="sas" class="org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy">
+	<constructor-arg ref="sessionRegistry"></constructor-arg>
+	 
+	<property name="maximumSessions" value="1"></property>
+	</bean>
+
+
+<security:http auto-config="false" create-session="ifRequired" entry-point-ref="authenticationEntryPoint">
+<security:custom-filter ref="authenticationFilter" position="FORM_LOGIN_FILTER"/>
+<security:custom-filter ref="concurrencyFilter" position="CONCURRENT_SESSION_FILTER"/>
+<security:session-management session-authentication-strategy-ref="sas"></security:session-management>
+<security:access-denied-handler ref="accessDeniedHandler"/>
+<security:intercept-url pattern="/user_loan*" access="ROLE_USER" requires-channel="https"/>
+<security:intercept-url pattern="/clerk*" access="ROLE_CLERK" requires-channel="https"/>
+<security:intercept-url pattern="/admin*" access="ROLE_ADMIN" requires-channel="https"/>
+<security:intercept-url pattern="/show*" access="ROLE_USER" requires-channel="https"/>
+<security:intercept-url pattern="/register*" access="hasRole('ROLE_ANONYMOUS')" requires-channel="https"/>
+<!-- <security:form-login login-page="/login" authentication-success-handler-ref="mySuccessHandler" always-use-default-target="true" authentication-failure-url="/loginfailed" /> -->
+<security:http-basic/>
+<security:logout logout-success-url="/logout" invalidate-session="true" />
+<security:session-management invalid-session-url="/"/>
+<security:port-mappings>
+<security:port-mapping http="8080" https="8443"/>
+</security:port-mappings>
+</security:http>
+
+
+
+    
+<bean id="dataSource1" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+	<property name="url" value="jdbc:mysql//localhost:3306/sushil" />
+	<property name="username" value="root" />
+	<property name="password" value="root"/>
+</bean>
+<bean id="accessDeniedHandler" 
+	class="com.sushil.sob.handler.MyAccessDeniedHandler">
+	<property name="accessDeniedUrl" value="access_denied" />
+   </bean>
+<bean id="concurrencyFilter" class="org.springframework.security.web.session.ConcurrentSessionFilter" >
+<constructor-arg ref="sessionRegistry"></constructor-arg>
+</bean> 
+<bean id="sessionRegistry" class="org.springframework.security.core.session.SessionRegistryImpl">
+</bean>
+
+<security:authentication-manager alias="authenticationManager">
+	  <security:authentication-provider>
+	 <!-- <security:password-encoder hash="sha">
+	 <security:salt-source user-property="username"/>
+	 </security:password-encoder> -->
+	   <security:jdbc-user-service data-source-ref="dataSource1" users-by-username-query="SELECT username,password,1 as enabled from nuser WHERE username=?" 
+	   authorities-by-username-query="select u.username, ur.authority from nuser u, nuser_rules ur where u.user_id=ur.user_id and u.username =?" />
+	    <!-- <security:user-service>
+		<security:user name="mkyong" password="123456" authorities="ROLE_USER" />
+		<security:user name="yong" password="12345" authorities="ROLE_ADMIN" />
+		<security:user name="p" password="1" authorities="ROLE_CLERK" />
+	    </security:user-service> -->
+	  </security:authentication-provider>
+	</security:authentication-manager>
+
+</beans>
